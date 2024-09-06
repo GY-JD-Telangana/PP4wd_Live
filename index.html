@@ -105,6 +105,21 @@
             document.getElementById("submit-button").disabled = true;
         }
 
+        // Function to detect device type
+        function getDeviceType() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            if (/android/i.test(userAgent)) {
+                return 'Android';
+            }
+
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                return 'iOS';
+            }
+
+            return 'Unknown'; // Default if neither is detected
+        }
+
         // Function to submit the form data to Google Sheets
         function submitForm() {
             const data = {
@@ -117,10 +132,15 @@
                 category: document.getElementById("category").value,
                 subcategory: document.getElementById("subcategory").value,
                 latitude: document.getElementById("latitude").value,
-                longitude: document.getElementById("longitude").value
+                longitude: document.getElementById("longitude").value,
+                deviceType: getDeviceType() // Capture device type
             };
 
-            const url = "https://script.google.com/macros/s/AKfycbzexDTMNS_p-eyMR8F2XDN6LBoy5uObyuZwgWNZxFBGIKgym7sZOKJur3-kUc0Vww_Z/exec"; // Replace with your Google Apps Script URL
+            const url = "https://script.google.com/macros/s/AKfycbwBcHNh_VfM9WI_ClC-MK5xKdcwkQFIq4J50wyNh_FzJdExHwLNOZZIOGULxPbcje6D/exec"; // Replace with your Google Apps Script URL
+
+            const submitButton = document.getElementById("submit-button");
+            submitButton.textContent = "Pl wait, uploading data"; // Change button text
+            submitButton.disabled = true; // Disable button
 
             fetch(url, {
                 method: "POST",
@@ -131,8 +151,12 @@
                 body: JSON.stringify(data)
             }).then(response => {
                 alert("Form submitted successfully!");
+                submitButton.textContent = "Submit"; // Reset button text
+                submitButton.disabled = false; // Re-enable button
             }).catch(error => {
                 console.error("Error submitting form:", error);
+                submitButton.textContent = "Submit"; // Reset button text on error
+                submitButton.disabled = false; // Re-enable button
             });
         }
 
@@ -156,10 +180,9 @@
     <div><p style="text-align:center;color:white;">లొకేషన్ కి ఎలా పర్మిషన్ ఇవ్వాలో పేజీ కింద ఉన్న వీడియో లో చుడండి </div></p>
 
     <form onsubmit="event.preventDefault(); submitForm();">
+       
         <label for="name">Your Name:</label>
         <input type="text" id="name" name="name" required>
-
-        
 
         <label><b>Is there JD Tractor in this Village?:</b></label>
         <div class="radio-group">
@@ -191,7 +214,7 @@
             <option value="Adilabad">Adilabad</option>
             <option value="Bhadradri Kothagudem">Bhadradri Kothagudem</option>
             <option value="Hyderabad">Hyderabad</option>
-        <option value="Jagitial">Jagitial</option>
+           <option value="Jagitial">Jagitial</option>
         <option value="Jangoan">Jangoan</option>
         <option value="Jayashankar Bhupalapally">Jayashankar Bhupalapally</option>
         <option value="Jogulamba Gadwal">Jogulamba Gadwal</option>
@@ -223,7 +246,8 @@
         <option value="Warangal (Rural)">Warangal (Rural)</option>
         <option value="Warangal (Urban)">Warangal (Urban)</option>
         <option value="Yadadri Bhuvanagiri">Yadadri Bhuvanagiri</option>
-
+ 
+           
         </select>
 
         <div class="question-box">
@@ -232,36 +256,11 @@
                 <option value="">Click to Select</option>
             </select>
         </div>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Village Name Input</title>
-     <style>
-        .input-container {
-            display: flex; /* Use flexbox for alignment */
-            align-items: center; /* Center items vertically */
-        }
 
-        label {
-            margin-right: 10px; /* Space between label and input */
-        }
-
-        /* Targeting only the input with id "location-info" */
-        #location-info {
-            border: 2px solid red; /* Red border */
-            padding: 5px; /* Padding inside the input box */
-            width: 180px; /* Set the width of the input box */
-            box-sizing: border-box; /* Include padding and border in the width */
-        }
-    </style>
-</head>
-<body>
-
-    <label for="location-info">Write name of this village:</label>
-    <div class="input-box">
-        <input type="text" id="location-info" name="location-info" required>
-    </div>
-
+        <label for="location-info">Write name of this village:</label>
+        <div class="input-box">
+            <input type="text" id="location-info" name="location-info" required>
+        </div>
 
         <label for="dropdown2">Approx Total village population:</label>
         <select id="dropdown2" name="dropdown2" required>
@@ -281,12 +280,10 @@
         <input type="submit" id="submit-button" value="Submit">
     </form>
 
-<div> <p> 
+    <div> <p> 
+    </p></div>
 
-
-</p></div>
-
-<img src="https://duet-cdn.vox-cdn.com/thumbor/0x0:1080x1080/1200x1200/filters:focal(540x540:541x541):no_upscale():format(webp)/cdn.vox-cdn.com/uploads/chorus_asset/file/22728661/image.gif" width="250" height="400" style="display: block; margin: 0 auto;">
+    <img src="https://duet-cdn.vox-cdn.com/thumbor/0x0:1080x1080/1200x1200/filters:focal(540x540:541x541):no_upscale():format(webp)/cdn.vox-cdn.com/uploads/chorus_asset/file/22728661/image.gif" width="250" height="400" style="display: block; margin: 0 auto;">
 
     <script>
         // Function to populate the second dropdown based on the selection in the first dropdown
@@ -300,10 +297,10 @@
 
             // Define subcategories for each category
             const subcategories = {
-    "Adilabad": ["Adilabad", "Bazarhathnoor", "Bela", "Bheempur", "Boath", "Gudihathnoor", "Ichoda", "Inderavelly", "Jainad", "Mavala", "Narnoor", "Neradigonda", "Talamadugu", "Tamsi", "Utnoor"],
+                "Adilabad": ["Adilabad", "Bazarhathnoor", "Bela", "Bheempur", "Boath", "Gudihathnoor", "Ichoda", "Inderavelly", "Jainad", "Mavala", "Narnoor", "Neradigonda", "Talamadugu", "Tamsi", "Utnoor"],
                 "Bhadradri Kothagudem": ["Allapalli", "Aswapuram", "Aswaraopeta", "Bhadrachalam", "Burgampahad", "Chandrugonda", "Cherla", "Dammapeta", "Dummugudem", "Gundala-1", "Julurpad", "Karakagudem", "Kothagudem", "Manuguru", "Mulkalapalle", "Palwancha", "Pinapaka", "Tekulapalle", "Venkatapuram", "Wazeed", "Yellandu"],
                 "Hyderabad": ["Ameerpet", "Golconda", "Khairatabad", "Secunderabad"],
-                "Jagitial": ["Beerpur", "Buggaram", "Dharmapuri", "Gollapalle", "Ibrahimpatnam-1", "Jagtial", "Jagtial Rural", "Kathlapur", "Kodimial", "Koratla", "Mallapur", "Mallial", "Medipalle", "Metpalle", "Pegadapalle", "Raikal", "Sarangapur-2", "Velgatoor"],
+                  "Jagitial": ["Beerpur", "Buggaram", "Dharmapuri", "Gollapalle", "Ibrahimpatnam-1", "Jagtial", "Jagtial Rural", "Kathlapur", "Kodimial", "Koratla", "Mallapur", "Mallial", "Medipalle", "Metpalle", "Pegadapalle", "Raikal", "Sarangapur-2", "Velgatoor"],
                 "Jangoan": ["Bachannapet", "Chilpur", "Devaruppula", "Ghanpur (Station)", "Jangaon", "Kodakandla", "Lingala Ghanpur", "Narmetta", "Palakurthi", "Raghunathpalle", "Tharigoppula", "Zaffergadh"],
                 "Jayashankar Bhupalapally": ["Athmakur", "Bhupalpalle", "Chityal", "Ghanpur (Mulug)", "Kataram", "Mahadevpur", "Malharrao", "Mogullapalle", "Mutharam (Mahadevpur)", "Palimela", "Regonda", "Tekumatla"],
 "Jogulamba Gadwal": ["Alampur", "Dharur", "Gadwal", "Ghattu", "Ieej", "Itikyal", "Maldakal", "Manopad", "Nandinne (Kt Doddi)", "Rajoli", "Undavelly", "Waddepalle"],
@@ -349,8 +346,5 @@
             }
         }
     </script>
-
-
-
 </body>
 </html>
